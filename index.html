@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Path Animation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            position: relative;
+            width: 902px;
+            height: 405px;
+        }
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .ball {
+            width: 15px;
+            height: 15px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-7.5px, -7.5px);
+            z-index: 10;
+        }
+        .lawyer-category {
+            position: absolute;
+            background: lightgray;
+            padding: 5px;
+            border-radius: 5px;
+            z-index: 5;
+            cursor: pointer;
+            width: 60px;
+            text-align: center;
+        }
+        #custom-path {
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- SVG with all paths visible -->
+    <svg width="902" height="405" viewBox="0 0 902 405" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Left branch paths -->
+        <path d="M15.7889 43.9999V43.9999C7.78081 43.9999 1.28894 50.4917 1.28894 58.4999V405" stroke="#1F6BFF" stroke-width="2"/>
+        <path d="M314.789 43.9999H15.7889" stroke="#1F6BFF" stroke-width="2"/>
+        <path d="M436.789 44.0023L314.789 44.0023" stroke="#1F6BFF" stroke-width="2"/>
+        <path d="M314.789 44.0023V44.0023C307.057 44.0023 300.789 50.2703 300.789 58.0023V404.591" stroke="#1F6BFF" stroke-width="2"/>
+        
+        <!-- Center paths -->
+        <path d="M450.789 0.590576V30.0023C450.789 37.7343 444.521 44.0023 436.789 44.0023V44.0023" stroke="#1F6BFF" stroke-width="2"/>
+        <path d="M450.789 0.590576V30.0023C450.789 37.7343 457.057 44.0023 464.789 44.0023V44.0023" stroke="#1F6BFF" stroke-width="2"/>
+        
+        <!-- Right branch paths -->
+        <path d="M885.789 43.9999V43.9999C893.797 43.9999 900.289 50.4917 900.289 58.4999V405" stroke="#1F6BFF" stroke-width="2"/>
+        <path d="M586.789 43.9999H885.789" stroke="#1F6BFF" stroke-width="2"/>
+        <path d="M464.789 44.0023L586.789 44.0023" stroke="#1F6BFF" stroke-width="2"/>
+        <path d="M586.789 44.0023V44.0023C594.521 44.0023 600.789 50.2703 600.789 58.0023V404.591" stroke="#1F6BFF" stroke-width="2"/>
+        
+        <!-- Hidden path for custom animations -->
+        <path id="custom-path" fill="none" stroke="none" visibility="hidden"/>
+    </svg>
+    
+    <!-- Moving Ball -->
+    <div class="ball" id="ball"></div>
+
+    <!-- Categories with IDs -->
+    <div class="lawyer-category" style="top: 0px; left: 440px;" id="root">Root</div>
+    <div class="lawyer-category" style="top: 50px; left: 0px;" id="div1">div1</div>
+    <div class="lawyer-category" style="top: 50px; left: 300px;" id="div2">div2</div>
+    <div class="lawyer-category" style="top: 50px; left: 531px;" id="div3">div3</div>
+    <div class="lawyer-category" style="top: 50px; left: 830px;" id="div4">div4</div>
+    <div class="lawyer-category" style="top: 150px; left: 0px;" id="div5">div5</div>
+    <div class="lawyer-category" style="top: 150px; left: 300px;" id="div6">div6</div>
+    <div class="lawyer-category" style="top: 150px; left: 531px;" id="div7">div7</div>
+    <div class="lawyer-category" style="top: 150px; left: 830px;" id="div8">div8</div>
+    <div class="lawyer-category" style="top: 250px; left: 0px;" id="div9">div9</div>
+    <div class="lawyer-category" style="top: 250px; left: 300px;" id="div10">div10</div>
+    <div class="lawyer-category" style="top: 250px; left: 531px;" id="div11">div11</div>
+    <div class="lawyer-category" style="top: 250px; left: 830px;" id="div12">div12</div>
+    <div class="lawyer-category" style="top: 350px; left: 0px;" id="div13">div13</div>
+    <div class="lawyer-category" style="top: 350px; left: 300px;" id="div14">div14</div>
+    <div class="lawyer-category" style="top: 350px; left: 531px;" id="div15">div15</div>
+    <div class="lawyer-category" style="top: 350px; left: 830px;" id="div16">div16</div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    gsap.registerPlugin(MotionPathPlugin);
+
+    // Initialize ball position at root
+    gsap.set("#ball", { x: 450.789, y: 0.590576 });
+
+    // Define complete paths for all divs from root
+    const divPaths = {
+        div1: [{x:450.789,y:0.590576}, {x:436.789,y:44}, {x:314.789,y:44}, {x:15.789,y:44}],
+        div2: [{x:450.789,y:0.590576}, {x:450.789,y:44}, {x:300.789,y:44}],
+        div3: [{x:450.789,y:0.590576}, {x:464.789,y:44}, {x:586.789,y:44}, {x:885.789,y:44}],
+        div4: [{x:450.789,y:0.590576}, {x:464.789,y:44}, {x:586.789,y:44}],
+        div5: [{x:450.789,y:0.590576}, {x:436.789,y:44}, {x:314.789,y:44}, {x:15.789,y:44}, {x:1.289,y:58}, {x:1.289,y:150}],
+        div6: [{x:450.789,y:0.590576}, {x:450.789,y:44}, {x:300.789,y:44}, {x:300.789,y:150}],
+        div7: [{x:450.789,y:0.590576}, {x:464.789,y:44}, {x:586.789,y:44}, {x:600.789,y:58}, {x:600.789,y:150}],
+        div8: [{x:450.789,y:0.590576}, {x:464.789,y:44}, {x:586.789,y:44}, {x:885.789,y:44}, {x:900.289,y:58}, {x:900.289,y:150}],
+        div9: [{x:450.789,y:0.590576}, {x:436.789,y:44}, {x:314.789,y:44}, {x:15.789,y:44}, {x:1.289,y:58}, {x:1.289,y:150}, {x:1.289,y:250}],
+        div10: [{x:450.789,y:0.590576}, {x:450.789,y:44}, {x:300.789,y:44}, {x:300.789,y:150}, {x:300.789,y:250}],
+        div11: [{x:450.789,y:0.590576}, {x:464.789,y:44}, {x:586.789,y:44}, {x:600.789,y:58}, {x:600.789,y:150}, {x:600.789,y:250}],
+        div12: [{x:450.789,y:0.590576}, {x:464.789,y:44}, {x:586.789,y:44}, {x:885.789,y:44}, {x:900.289,y:58}, {x:900.289,y:150}, {x:900.289,y:250}],
+        div13: [{x:450.789,y:0.590576}, {x:436.789,y:44}, {x:314.789,y:44}, {x:15.789,y:44}, {x:1.289,y:58}, {x:1.289,y:150}, {x:1.289,y:250}, {x:1.289,y:350}],
+        div14: [{x:450.789,y:0.590576}, {x:450.789,y:44}, {x:300.789,y:44}, {x:300.789,y:150}, {x:300.789,y:250}, {x:300.789,y:350}],
+        div15: [{x:450.789,y:0.590576}, {x:464.789,y:44}, {x:586.789,y:44}, {x:600.789,y:58}, {x:600.789,y:150}, {x:600.789,y:250}, {x:600.789,y:350}],
+        div16: [{x:450.789,y:0.590576}, {x:464.789,y:44}, {x:586.789,y:44}, {x:885.789,y:44}, {x:900.289,y:58}, {x:900.289,y:150}, {x:900.289,y:250}, {x:900.289,y:350}]
+    };
+
+
+    function animateToDiv(divId) {
+    if (!divPaths[divId]) return;
+
+    // Kill any existing animations
+    gsap.killTweensOf("#ball");
+
+    // Reset to root before animation starts
+    gsap.set("#ball", { x: 450.789, y: 0.590576 });
+
+    // Clone path and modify only the last point to move slightly down
+    let adjustedPath = divPaths[divId].map((p, index, arr) => 
+        index === arr.length - 1 ? { x: p.x, y: p.y + 10 } : p
+    );
+
+    // Create a new SVG path dynamically
+    let newPath = "M " + adjustedPath.map(p => `${p.x},${p.y}`).join(" L ");
+    document.getElementById("custom-path").setAttribute("d", newPath);
+
+    // Animate along the new path
+    gsap.to("#ball", {
+        duration: 2,
+        motionPath: {
+            path: "#custom-path",
+            align: "#custom-path",
+            autoRotate: true,
+            alignOrigin: [0.5, 0.5],
+            useSVG: true
+        },
+        ease: "power1.inOut",
+        onComplete: function() {
+            // Restart auto animation after click animation finishes
+            startAutoAnimation();
+        }
+    });
+}
+
+
+    // Function to start auto animation
+    function startAutoAnimation() {
+        // Select all visible path elements from the SVG
+        let paths = document.querySelectorAll("svg path:not(#custom-path)");
+        
+        // Create a GSAP timeline to animate along multiple paths sequentially
+        let tl = gsap.timeline({ repeat: -1 });
+        
+        // Start from root
+        tl.set("#ball", { x: 450.789, y: 0.590576 });
+        
+        paths.forEach((path, index) => {
+            tl.to("#ball", {
+                duration: 2,
+                motionPath: {
+                    path: path,
+                    align: path,
+                    autoRotate: true,
+                    alignOrigin: [0.5, 0.5],
+                    useSVG: true
+                },
+                ease: "power1.inOut"
+            });
+        });
+    }
+
+    // Click handlers for each div
+    document.querySelectorAll(".lawyer-category").forEach(div => {
+        div.addEventListener("click", function() {
+            const divId = this.id;
+            if (divId !== "root") {
+                // Stop any current animations
+                gsap.globalTimeline.getChildren().forEach(t => t.kill());
+                // Animate to clicked div
+                animateToDiv(divId);
+            }
+        });
+    });
+
+    // Start the auto animation
+    startAutoAnimation();
+});
+</script>
+</body>
+</html>
